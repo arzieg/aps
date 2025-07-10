@@ -2,11 +2,11 @@ package memory
 
 type ServerItem struct {
 	CurrencyCode     string  `json:"currencyCode"`
-	TierMinimumUnits int     `json:"tierMinimumUnits"`
+	TierMinimumUnits float64 `json:"tierMinimumUnits"`
 	RetailPrice      float64 `json:"retailPrice"`
 	//UnitPrice            float64
-	ArmRegionName string `json:"armRegionName"`
-	//Location             string
+	ArmRegionName      string `json:"armRegionName"`
+	Location           string `json:"location"`
 	EffectiveStartDate string `json:"effectiveStartDate"`
 	//MeterId              string
 	//MeterName            string
@@ -21,4 +21,9 @@ type ServerItem struct {
 	Type          string `json:"type"`
 	//IsPrimaryMeterRegion bool
 	//ArmSkuName           string
+}
+
+type ServerItemResponse struct {
+	Items []ServerItem `json:"Items"`
+	Next  string       `json:"NextPageLink"`
 }
