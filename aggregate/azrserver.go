@@ -9,12 +9,17 @@ var (
 	ErrInvalidSKUID = errors.New("the skuid is unknown")
 )
 
+// Interface
+type ServerDataProvider interface {
+	GetAzrRetailPrices(serviceFamily string) ([]*aps.Server, error)
+}
+
 type AzrServerPrice struct {
-	server *aps.Server
+	servers []*aps.Server
 }
 
 type AzrServerSpec struct {
-	serverSpec *aps.ServerSpec
+	serverSpecs []*aps.ServerSpec
 }
 
 type AzrServer struct {
@@ -22,21 +27,22 @@ type AzrServer struct {
 	AzrServerSpec
 }
 
-func NewAzrServerPrice(skuid string) (AzrServerPrice, error) {
-	if skuid == "" {
-		return AzrServerPrice{}, ErrInvalidSKUID
+func NewAzrServerPrice(provider ServerDataProvider, serviceFamily string) (*AzrServerPrice, error) {
+	servers, err := provider.GetAzrRetailPrices(serviceFamily)
+	if err != nil {
+		return nil, err
 	}
 
-	server := &aps.Server{
-		SkuId: skuid,
-	}
-
-	return AzrServerPrice{
-		server: server,
+	return &AzrServerPrice{
+		servers: servers,
 	}, nil
-
 }
 
+func (a *AzrServerPrice) GetServers() []*aps.Server {
+	return a.servers
+}
+
+/*
 func (s *AzrServerPrice) GetID() (skuid string) {
 	return s.server.SkuId
 }
@@ -47,3 +53,9 @@ func (s *AzrServerPrice) SetID(skuid string) {
 	}
 	s.server.SkuId = skuid
 }
+
+func (s *AzrServerPrice) GetAll() *AzrServerPrice {
+	server := AzrServerPrice
+	return server
+}
+*/

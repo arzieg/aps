@@ -1,30 +1,29 @@
 package memory
 
 import (
+	"aps"
 	"aps/aggregate"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
-
-	"github.com/google/uuid"
 )
 
 const azureRetailPricesAPI = "https://prices.azure.com/api/retail/prices"
 
 type MemoryRepository struct {
-	servers map[uuid.UUID]aggregate.AzrServerPrice
+	servers map[string]aggregate.AzrServerPrice
 }
 
 // new is a factory function to generate a new repository of customers
 func New() *MemoryRepository {
 	return &MemoryRepository{
-		servers: make(map[uuid.UUID]aggregate.AzrServerPrice),
+		servers: make(map[string]aggregate.AzrServerPrice),
 	}
 }
 
-func (mr *MemoryRepository) GetAzrRetailPrices(serviceFamily string) (s aggregate.AzrServerPrice, err error) {
+func (mr *MemoryRepository) GetAzrRetailPrices(serviceFamily string) (servers []*aps.Server, err error) {
 
 	filter := fmt.Sprintf("serviceFamily eq '%s' and armRegionName eq 'westeurope' and serviceName eq 'Virtual Machines'", serviceFamily)
 	params := url.Values{}
@@ -47,5 +46,17 @@ func (mr *MemoryRepository) GetAzrRetailPrices(serviceFamily string) (s aggregat
 		fmt.Printf("SKU: %s | Price: %.2f %s | Region: %s  | SKUID: %s\n",
 			item.SkuName, item.RetailPrice, item.CurrencyCode, item.Location, item.SkuId)
 	}
-	return aggregate.AzrServerPrice{}, nil
+
+	for _, item := range data.Items {
+		srv := &aps.Server{
+			SkuName:      item.SkuName,
+			RetailPrice:  item.RetailPrice,
+			CurrencyCode: item.CurrencyCode,
+			Location:     item.Location,
+			SkuId:        item.SkuId,
+		}
+		servers = append(servers, srv)
+	}
+
+	return servers, nil
 }
