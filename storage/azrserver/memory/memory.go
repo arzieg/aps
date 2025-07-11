@@ -14,17 +14,17 @@ import (
 const azureRetailPricesAPI = "https://prices.azure.com/api/retail/prices"
 
 type MemoryRepository struct {
-	servers map[uuid.UUID]aggregate.AzrServer
+	servers map[uuid.UUID]aggregate.AzrServerPrice
 }
 
 // new is a factory function to generate a new repository of customers
 func New() *MemoryRepository {
 	return &MemoryRepository{
-		servers: make(map[uuid.UUID]aggregate.AzrServer),
+		servers: make(map[uuid.UUID]aggregate.AzrServerPrice),
 	}
 }
 
-func (mr *MemoryRepository) GetAzrRetailPrices(serviceFamily string) {
+func (mr *MemoryRepository) GetAzrRetailPrices(serviceFamily string) (s aggregate.AzrServerPrice, err error) {
 
 	filter := fmt.Sprintf("serviceFamily eq '%s' and armRegionName eq 'westeurope' and serviceName eq 'Virtual Machines'", serviceFamily)
 	params := url.Values{}
@@ -44,8 +44,8 @@ func (mr *MemoryRepository) GetAzrRetailPrices(serviceFamily string) {
 	}
 
 	for _, item := range data.Items {
-		fmt.Printf("SKU: %s | Price: %.2f %s | Region: %s\n",
-			item.SkuName, item.RetailPrice, item.CurrencyCode, item.Location)
+		fmt.Printf("SKU: %s | Price: %.2f %s | Region: %s  | SKUID: %s\n",
+			item.SkuName, item.RetailPrice, item.CurrencyCode, item.Location, item.SkuId)
 	}
-
+	return aggregate.AzrServerPrice{}, nil
 }

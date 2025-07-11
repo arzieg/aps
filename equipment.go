@@ -1,8 +1,6 @@
 package aps
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -12,12 +10,12 @@ import (
 type Server struct {
 	ID                   uuid.UUID
 	CurrencyCode         [3]string
-	TierMinimumUnits     int
+	TierMinimumUnits     float64
 	RetailPrice          float64
 	UnitPrice            float64
 	ArmRegionName        string
 	Location             string
-	EffectiveStartDate   time.Time
+	EffectiveStartDate   string
 	MeterId              string
 	MeterName            string
 	ProductId            string

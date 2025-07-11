@@ -10,8 +10,8 @@ type ServerItem struct {
 	EffectiveStartDate string `json:"effectiveStartDate"`
 	//MeterId              string
 	//MeterName            string
-	//ProductId            string
-	//SkuId                string
+	ProductId   string `json:"productId"`
+	SkuId       string `json:"skuId"`
 	ProductName string `json:"productName"`
 	SkuName     string `json:"skuName"`
 	//ServiceName          string
